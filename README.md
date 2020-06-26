@@ -1,4 +1,12 @@
 ## Questão 1
+Suponha que diariamente você recebe atualizações de uma aplicação via ftp, onde ela é
+desenvolvida por uma fábrica de software terceira e você não pode sugerir mudanças na esteira
+de build, porém precisa automatizar o recebimento do pacote e deploy no servidor de destino.
+Elabore uma documentação com a sua sugestão para automatizar o processo e explique o
+porquê de cada passo sugerido.
+Para este caso, considere que é uma aplicação Java que não depende de um servidor de
+aplicação, é iniciada diretamente com java -jar e está hospedada em um servidor linux.
+
 
 
 Essa primeira questão é bem genérica, e varios fatores da aplicação, a forma da qual ela é provida, e o tipo de acesso que temos disponível ao ftp resultaria em métodos diferenciados.
