@@ -41,7 +41,8 @@ experimento.
 
 ----------------
 
-###Instalação do minishift:
+### Instalação do minishift:
+
 Host OS: CentOS 7
 
 Primeiro instale as ferramentas de virtualização
@@ -95,7 +96,7 @@ Nos meus testes eu fiz o deploy de duas formas diferentes. Primeiro alterando um
 
 Modo 1:
 
-Altere o NGINX que executa sem usuario root. Segue abaixo o dockerfile (tambem no repositório):
+Altere o NGINX que executa sem usuario root. Segue abaixo o dockerfile (também no repositório):
 
 ```
 FROM nginxinc/nginx-unprivileged
@@ -114,12 +115,36 @@ docker build .
 
 Caso não o tenha feito ainda, execute o docker login e logue na sua conta do docker hub
 
-Faça o commit e o push do container, utilizando o código gerado no commit
+Faça o commit e o push do container, utilizando o código da imagem gerado no commit
 
 ```
 docker commit 5cc750d00e1a docker.io/carlosbunn/nginx.carlos
 docker push docker.io/carlosbunn/nginx.carlos
 ```
+
+A partir desse ponto podemos continuar no console web. O login padrão é admin/admin
+
+Inicie um novo projeto em "Create Project"
+
+Após clicar em create, abra o projeto, e clique em "Deploy Image". Preencha o campo com o repositório da sua imagem no docker hub
+
+Nesse processo a rota não é criada por padrão, então clique no link "Create route". Pode-se usar as opções padrão.
+
+Assim que o container terminar o deploy, o NGINX deverá estar acessivel na rota criada. O json de status está em /status.json
+
+Modo 2:
+
+Nesse modo podemos ir direto no catálogo e escolher o "Nginx HTTP server and reverse proxy (nginx)"
+
+Eu fiz o clone do repositório de teste (https://github.com/sclorg/nginx-ex.git) e adicionei o arquivo json requerido pela questão no seguinte repositório: https://github.com/carlosbunn/nginx
+
+Preencha com o repositório alterado no campo "Git repository" e inicie um novo projeto.
+
+A URL de acesso já está na aba overview. Basta clicar no link e adicionar /status.json no final da URL.
+
+
+
+
 
 ## Questão 3
 
@@ -128,6 +153,12 @@ e-mail de que este serviço não está disponível. Utilize a linguagem que pref
 Python, Perl, Go, etc...).
 
 Segue o script para fazer o teste abaixo (também no repositório)
+
+O comando da crontab no meu caso seria o seguinte, imaginando que o script está em /usr/bin
+
+```
+2 * * * * /usr/bin/testjson.sh 'http://nginxcarlos-nginx-docker.192.168.99.100.nip.io/status.json' carlos.bunn@notmyrealmail.com >/dev/null 2>&1
+```
 
 ```
 #!/bin/bash
