@@ -16,7 +16,7 @@ Assumindo uma aplicação simples, sem banco de dados, onde o objetivo seja apen
 
 * Caso o arquivo esteja presente, fazer o download do jar para uma pasta nomeada com a data e hora para facilitar a identificação (Ex 2020-06-20-13). Caso necessário renomear o arquivo para o mesmo nome do aplicativo em produção. 
 
-*Adicionar o sha256sum do aplicativo em uma lista, para que não ocorra erro de re-deploy do mesmo arquivo, caso a data dele mude por qualquer motivo. Essa lista deve ser testada sempre que um download seja feito, e o script pode parar caso encontre a string
+* Adicionar o sha256sum do aplicativo em uma lista, para que não ocorra erro de re-deploy do mesmo arquivo, caso a data dele mude por qualquer motivo. Essa lista deve ser testada sempre que um download seja feito, e o script pode parar caso encontre a string
 
 * Rodar um container para testar a aplicação, onde o volume aponta para a pasta 020-06-20-13. O container roda o java -jar <app.jar>. Eu alternaria a porta exposta do container entre duas opções, basta testar qual porta está em vigor em produção no momento e usar a outra para subir o container mais recente (Ex. 8181 e 8282)
 
@@ -30,9 +30,104 @@ Reiterando que essa é uma solução genérica. Caso a empresa use Jenkins, eu a
 
 ## Questão 2
 
+Crie um laboratório e inicie uma instacia do minishift (​ https://github.com/minishift/minishift​ ),
+após este passo faça neste minishift o deploy de um docker com nginx e faça ele prover
+estaticamente um arquivo json com o seguinte conteúdo:
 
+{"service": {"oracle": "ok", "redis": "ok", "mongo": "down", "pgsql": "down", "mysql": "ok"}}
+
+Elabore uma documentação no estilo how-to para que outra pessoa possa replicar o seu
+experimento.
+
+----------------
+
+###Instalação do minishift:
+Host OS: CentOS 7
+
+Primeiro instale as ferramentas de virtualização
+
+```
+yum install qemu-kvm libvirt libvirt-python libguestfs-tools virt-install
+```
+
+Caso o kvm apresente problemas, é possivel usar os drivers do virtualbox
+Faça o download do pacote no site do virtualbox, e prepare o sistema antes da instalação:
+
+```
+yum install kernel-devel kernel-devel-3.10.0-1127.13.1.el7.x86_64 gcc make perl -y
+```
+
+Após as ferramentas do kernel serem instaladas, é possivel prosseguir com a instalação do virtualbox:
+
+```
+rpm -i VirtualBox-6.1-6.1.10_138449_el7-1.x86_64.rpm 
+
+```
+
+Depois podemos fazer a instalação do minishift:
+
+```
+wget https://github.com/minishift/minishift/releases/download/v1.34.2/minishift-1.34.2-linux-amd64.tgz
+tar -zxvf minishift-1.34.2-linux-amd64.tgz 
+mv minishift-1.34.2-linux-amd64/ /bin/
+chmod 777 /bin/minishift 
+```
+
+Inicie o minishift:
+```
+minishift start
+```
+Caso esteja usando a versão do virtualbox, use o comando a seguir:
+
+```
+minishift start --vm-driver virtualbox
+```
+
+Após o start, pegue a url do console com 
+
+```
+minishift console --url
+```
+
+### Fazendo o deploy do container NGINX:
+
+Nos meus testes eu fiz o deploy de duas formas diferentes. Primeiro alterando um container docker, depois alterando o repositório de um deploy de exemplo.
+
+Modo 1:
+
+Altere o NGINX que executa sem usuario root. Segue abaixo o dockerfile (tambem no repositório):
+
+```
+FROM nginxinc/nginx-unprivileged
+USER root
+RUN echo "{\"service\": {\"oracle\": \"ok\", \"redis\": \"ok\", \"mongo\": \"down\", \"pgsql\": \"down\", \"mysql\": \"ok\"}}"> /usr/share/nginx/html/status.json
+RUN chown nginx:nginx /usr/share/nginx/html/status.json
+USER nginx 
+CMD ["/usr/sbin/nginx","-g","daemon off;"]
+```
+
+Faça o build do container executando na pasta do dockerfile
+
+```
+docker build .
+```
+
+Caso não o tenha feito ainda, execute o docker login e logue na sua conta do docker hub
+
+Faça o commit e o push do container, utilizando o código gerado no commit
+
+```
+docker commit 5cc750d00e1a docker.io/carlosbunn/nginx.carlos
+docker push docker.io/carlosbunn/nginx.carlos
+```
 
 ## Questão 3
+
+Crie um processo automático que lê o json publicado na questão anterior e gere um alerta via
+e-mail de que este serviço não está disponível. Utilize a linguagem que preferir (Shell Script,
+Python, Perl, Go, etc...).
+
+Segue o script para fazer o teste abaixo (também no repositório)
 
 ```
 #!/bin/bash
