@@ -126,23 +126,37 @@ A partir desse ponto podemos continuar no console web. O login padrão é admin/
 
 Inicie um novo projeto em "Create Project"
 
+![Screenshot](/Screenshot%20from%202020-06-26%2011-50-28.png?raw=true)
+
 Após clicar em create, abra o projeto, e clique em "Deploy Image". Preencha o campo com o repositório da sua imagem no docker hub
+
+![Screenshot](/Screenshot%20from%202020-06-26%2011-54-28.png?raw=true)
 
 Nesse processo a rota não é criada por padrão, então clique no link "Create route". Pode-se usar as opções padrão.
 
+![Screenshot](/Screenshot%20from%202020-06-26%2011-55-00.png?raw=true)
+
+![Screenshot](/Screenshot%20from%202020-06-26%2011-55-19.png?raw=true)
+
 Assim que o container terminar o deploy, o NGINX deverá estar acessivel na rota criada. O json de status está em /status.json
+
+![Screenshot](/Screenshot%20from%202020-06-26%2011-55-56.png?raw=true)
 
 Modo 2:
 
 Nesse modo podemos ir direto no catálogo e escolher o "Nginx HTTP server and reverse proxy (nginx)"
 
+![Screenshot](/Screenshot%20from%202020-06-26%2012-03-39.png?raw=true)
+
 Eu fiz o clone do repositório de teste (https://github.com/sclorg/nginx-ex.git) e adicionei o arquivo json requerido pela questão no seguinte repositório: https://github.com/carlosbunn/nginx
 
 Preencha com o repositório alterado no campo "Git repository" e inicie um novo projeto.
 
+![Screenshot](/Screenshot%20from%202020-06-26%2012-07-21.png?raw=true)
+
 A URL de acesso já está na aba overview. Basta clicar no link e adicionar /status.json no final da URL.
 
-
+![Screenshot](/Screenshot%20from%202020-06-26%2012-10-31.png?raw=true)
 
 
 
